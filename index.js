@@ -49,6 +49,7 @@ function chooseShape(){
 function gameboard(){
 
     const board = [];
+    /*Generates an array for the board */
 
     for (let i = 0; i < 3; i++) {
         board[i]= []
@@ -106,6 +107,7 @@ function gameboard(){
             }
         }
         return false;
+        /*Used to check for 3 in a column to allow for checking of winners, if winner returns 1 or 2 to help indicate in game controller who won */
       }
 
       const checkRow = () =>{
@@ -119,6 +121,7 @@ function gameboard(){
             }
         }
         return false;
+        /*Used to check for 3 in a row to allow for checking of winners, if winner returns 1 or 2 to help indicate in game controller who won */
       }
 
       const checkDiagonal = () => {
@@ -137,6 +140,7 @@ function gameboard(){
         }else{
             return false;
         }
+        /*Used to check for 3 in a row diagonally to allow for checking of winners, if winner returns 1 or 2 to help indicate in game controller who won */
       }
 
       const checkBoard = () => {
@@ -149,6 +153,7 @@ function gameboard(){
         }else{
             return false;
         }
+        /*Used to check the board and returns the value that corresponds to which player won */
       }
 
 
@@ -163,6 +168,7 @@ function gameController(){
     const cpu ="X";
     let turn = 1;
 
+    /*Phase 1 of the code was meant for console play only and game development gameChoice will be called in the full game function */
     const grid = gameboard();
 
     const getTurn = ()=> {return turn};
@@ -178,6 +184,7 @@ function gameController(){
                 alert("Sorry this space is filled, please choose another space.")
             }
         }
+        /*Prompts the user to move using the prompt function and makes the move have to be valid in terms of the grid spacing */
     }
 
     const cpuMove = () =>{
@@ -186,12 +193,13 @@ function gameController(){
             let cpuChoice = Math.floor(Math.random()*10);
             validMove = grid.fillCell(cpuChoice, cpu);
         }
-
+        /*Uses random function and floor function to select a number from 1-9 for the computer and makes the move have to be valid in terms of the grid spacing */
     }
 
 
     const showBoardState = () =>{
         grid.printBoard();
+        /*Uses the gameBoards print board function to display the board */
     }
 
     const checkWinner = () =>{
@@ -203,6 +211,8 @@ function gameController(){
             return true;
         }
         return false;
+
+        /*Uses the grids Checkboard function to check if there is a winning condition, uses console.log to declare winner and returns true to help break a while loop  */
     }
 
     return{getTurn, advanceTurn, userMove, cpuMove, showBoardState, checkWinner};
@@ -227,3 +237,4 @@ while(game.getTurn()<10){
 game.showBoardState();
 alert("Game finish!");
 
+/*We need to implement the draw condition, work on UI logic, create play-a-round function that encompasses the code   */
