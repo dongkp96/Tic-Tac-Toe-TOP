@@ -85,7 +85,44 @@ function gameboard(){
         /*Used to replace spaces on the board with the player's symbol*/
       }
 
-      return {getBoard, printBoard, fillCell};
+      const checkColumn = () => {
+        if(board[0][0] === board[1][0] && board[1][0]===board[2][0]|| 
+            board[0][1] === board[1][1] && board[1][1]===board[2][1] ||
+            board[0][2] === board[1][2] && board[1][2]===board[2][2]){
+            return true;
+        }else{
+            return false;
+        }
+      }
+
+      const checkRow = () =>{
+        for(let i=0; i<3; i++){
+            if(board[i][0]=== board[i][1] && board[i][1]===board[i][2]){
+                return true;
+            }
+        }
+        return false;
+      }
+
+      const checkDiagonal = () => {
+        if(board[0][0]===board[1][1] && board[1][1]===board[2][2]||board[0][2]===board[1][1] && board[0][2] === board[2][0]){
+            return true;
+        }else{
+            return false;
+        }
+      }
+
+      const checkBoard = () => {
+        if(checkRow()===true||checkColumn()===true||checkDiagonal()===true){
+            return true;
+        }else{
+            return false;
+        }
+      }
+
+
+
+      return {getBoard, printBoard, fillCell, checkBoard};
 
 };
 
@@ -97,7 +134,9 @@ function gameController(){
 
     const grid = gameboard();
 
-    const advanceTurn = () => turn +=1;
+    const getTurn = ()=> {return turn};
+
+    const advanceTurn = () => {turn +=1};
 
     const userMove = () => {
         let validMove = false;
@@ -108,5 +147,27 @@ function gameController(){
                 alert("Sorry this space is filled, please choose another space.")
             }
         }
+        advanceTurn();
     }
+
+    const cpuMove = () =>{
+        let validMove = false;
+        while(validMove === false){
+            let cpuChoice = Math.floor(Math.random()*10);
+            validMove = grid.fillCell(cpuChoice, cpu);
+        }
+        advanceTurn();
+
+    }
+
+
+    const showBoardState = () =>{
+        grid.printBoard();
+    }
+
+    const checkWinner = () =>{
+        
+    }
+
+    return{getTurn, advanceTurn, userMove, cpuMove, showBoardState, checkWinner};
 };
