@@ -86,35 +86,66 @@ function gameboard(){
       }
 
       const checkColumn = () => {
-        if(board[0][0] === board[1][0] && board[1][0]===board[2][0]|| 
-            board[0][1] === board[1][1] && board[1][1]===board[2][1] ||
-            board[0][2] === board[1][2] && board[1][2]===board[2][2]){
-            return true;
-        }else{
-            return false;
+        if(board[0][0] === board[1][0] && board[1][0]===board[2][0]){
+            if(board[0][0]==="O"){
+                return 1;
+            }else if(board[0][0]==="X"){
+                return 2;
+            }
+        }else if(board[0][1] === board[1][1] && board[1][1]===board[2][1]){
+            if (board[0][1]==="O"){
+                return 1;
+            }else if (board[0][1]==="X"){
+                return 2;
+            }
+        }else if(board[0][2] === board[1][2] && board[1][2]===board[2][2]){
+            if(board[0][2]==="O"){
+                return 1;
+            }else if (board[0][2]==="X"){
+                return 2;
+            }
         }
+        return false;
       }
 
       const checkRow = () =>{
         for(let i=0; i<3; i++){
             if(board[i][0]=== board[i][1] && board[i][1]===board[i][2]){
-                return true;
+                if(board[i][0]==="O"){
+                    return 1;
+                }else if(board[i][0]==="X"){
+                    return 2;
+                }
             }
         }
         return false;
       }
 
       const checkDiagonal = () => {
-        if(board[0][0]===board[1][1] && board[1][1]===board[2][2]||board[0][2]===board[1][1] && board[0][2] === board[2][0]){
-            return true;
+        if(board[0][0]===board[1][1] && board[1][1]===board[2][2]){
+            if(board[0][0]==="O"){
+                return 1;
+            }else if(board[0][0]==="X"){
+                return 2;
+            }
+        }else if(board[0][2]===board[1][1] && board[0][2] === board[2][0]){
+            if(board[0][2]==="O"){
+                return 1;
+            }else if (board[0][2]==="X"){
+                return 2;
+            }
         }else{
             return false;
         }
       }
 
       const checkBoard = () => {
-        if(checkRow()===true||checkColumn()===true||checkDiagonal()===true){
-            return true;
+        if(checkRow()!==false){
+            return checkRow();
+        }else if(checkColumn()!== false){
+            return checkColumn();
+        }else if(checkDiagonal()!== false){
+            return checkDiagonal();
         }else{
             return false;
         }
@@ -147,7 +178,6 @@ function gameController(){
                 alert("Sorry this space is filled, please choose another space.")
             }
         }
-        advanceTurn();
     }
 
     const cpuMove = () =>{
@@ -156,7 +186,6 @@ function gameController(){
             let cpuChoice = Math.floor(Math.random()*10);
             validMove = grid.fillCell(cpuChoice, cpu);
         }
-        advanceTurn();
 
     }
 
@@ -166,8 +195,35 @@ function gameController(){
     }
 
     const checkWinner = () =>{
-        
+        if(grid.checkBoard()===1){
+            console.log("User Won!");
+            return true;
+        }else if (grid.checkBoard()===2){
+            console.log("User Lost");
+            return true;
+        }
+        return false;
     }
 
     return{getTurn, advanceTurn, userMove, cpuMove, showBoardState, checkWinner};
 };
+
+const game = gameController();
+
+while(game.getTurn()<10){
+    game.userMove();
+    game.advanceTurn();
+    if(game.checkWinner()===true){
+        break;
+    }
+    game.showBoardState();
+    game.cpuMove();
+    game.advanceTurn();
+    if(game.checkWinner()===true){
+        break;
+    }
+    game.showBoardState();
+}
+game.showBoardState();
+alert("Game finish!");
+
