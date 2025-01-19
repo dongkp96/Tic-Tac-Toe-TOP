@@ -19,7 +19,7 @@
     return{number, value, updateValue};
 }*/
 
-function chooseShape(){
+/*function chooseShape(){
     let player;
     let cpu;
     while(!player){
@@ -40,9 +40,10 @@ function chooseShape(){
 
     return {player, cpu};
 
-        /*Will use this function later with finished game module like trying to use const{player, cpu} = chooseShape();*/
+    
 
 } 
+*/
 /*^^^^^Storage area^^^^^*/
 
 
@@ -69,7 +70,7 @@ function gameboard(){
       /*Used to get the board and store it a variable for the gameController*/
 
       const printBoard = () => {
-        console.log(board);
+        alert(board);
       /*Used to display the board for the console currently for phase 1 */  
       }
 
@@ -84,6 +85,21 @@ function gameboard(){
         }
         return false;
         /*Used to replace spaces on the board with the player's symbol*/
+      }
+
+      const resetBoard = () =>{
+        for (let i = 0; i < 3; i++) {
+            board[i] = []; // Clear each row
+            for (let j = 1; j < 4; j++) {
+                if (i === 0) {
+                    board[i].push(j);
+                } else if (i === 1) {
+                    board[i].push(j + 3);
+                } else {
+                    board[i].push(j + 6);
+                }
+            }
+        }
       }
 
       const checkColumn = () => {
@@ -158,7 +174,7 @@ function gameboard(){
 
 
 
-      return {getBoard, printBoard, fillCell, checkBoard};
+      return {getBoard, printBoard, fillCell, checkBoard,resetBoard};
 
 };
 
@@ -179,18 +195,13 @@ function gameControl(){
 
     const createDom = () =>{
         screen.addDisplay();
-        screen.bindEventListeners();
+        screen.bindEventListeners(userMove, cpuMove, checkWinner);
+        screen.bindRestartBtn(restartGame);
     }
 
-    const userMove = () => {
-        let validMove = false;
-        while (validMove === false){
-            let userChoice = Number(prompt("Please choose a space on the grid for your move. Valid values is numbers 1-9"));
-            validMove = grid.fillCell(userChoice, player);
-            if(validMove === false){
-                alert("Sorry this space is filled, please choose another space.")
-            }
-        }
+    const userMove = (move) => {
+        grid.fillCell(move, player);
+        grid.printBoard();
         /*Prompts the user to move using the prompt function and makes the move have to be valid in terms of the grid spacing */
     }
 
@@ -213,15 +224,19 @@ function gameControl(){
 
     const checkWinner = () =>{
         if(grid.checkBoard()===1){
-            console.log("User Won!");
+            alert("User Won!");
             return true;
         }else if (grid.checkBoard()===2){
-            console.log("User Lost");
+            alert("User Lost");
             return true;
         }
         return false;
 
         /*Uses the grids Checkboard function to check if there is a winning condition, uses console.log to declare winner and returns true to help break a while loop  */
+    }
+
+    const restartGame=()=>{
+        grid.resetBoard();
     }
 
     return{getTurn, advanceTurn, userMove, cpuMove, showBoardState, checkWinner, createDom};
@@ -255,7 +270,6 @@ function screenControl(){
 
     const addO = (event) =>{
         event.target.textContent ="O";
-        event.target.removeEventListener("click", addO);
     }
 
     function addX(idNumber) {
@@ -263,18 +277,40 @@ function screenControl(){
         element.textContent ="X";
     }
 
-    const bindEventListeners =()=>{
+    const bindEventListeners =(user, opp, check)=>{
         const cards = document.querySelectorAll(".card");
         cards.forEach((card) =>{
-            card.addEventListener("click",addO);
+            card.addEventListener("mousedown",addO);
+            card.addEventListener("mouseup", (e)=>{
+                let move = Number(e.target.id[4]);
+                user(move);
+                check()
+                opp();
+                check();
+            } )
         })
     }
 
-    return{addDisplay, bindEventListeners, addX};
+    const reset = () =>{
+        const cards = document.querySelectorAll(".card");
+        cards.forEach((card)=>{
+            card.textContent ="";
+        })
+    }
+
+    const bindRestartBtn= (boardReset) =>{
+        const restartBtn = document.querySelector("#restart");
+        restartBtn.addEventListener("click", ()=>{
+            reset();
+            boardReset();
+        });
+
+    }
+
+    return{addDisplay, bindEventListeners, addX, bindRestartBtn};
 }
 
 const game = gameControl();
 game.createDom();
-game.cpuMove();
 
 /*We need to implement the draw condition, work on UI logic, create play-a-round function that encompasses the code   */
