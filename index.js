@@ -171,9 +171,16 @@ function gameControl(){
     /*Phase 1 of the code was meant for console play only and game development gameChoice will be called in the full game function */
     const grid = gameboard();
 
+    const screen = screenControl();
+
     const getTurn = ()=> {return turn};
 
     const advanceTurn = () => {turn +=1};
+
+    const createDom = () =>{
+        screen.addDisplay();
+        screen.bindEventListeners();
+    }
 
     const userMove = () => {
         let validMove = false;
@@ -189,10 +196,12 @@ function gameControl(){
 
     const cpuMove = () =>{
         let validMove = false;
+        let cpuChoice;
         while(validMove === false){
-            let cpuChoice = Math.floor(Math.random()*10);
+            cpuChoice = Math.floor(Math.random()*9)+1;
             validMove = grid.fillCell(cpuChoice, cpu);
         }
+        screen.addX(cpuChoice);
         /*Uses random function and floor function to select a number from 1-9 for the computer and makes the move have to be valid in terms of the grid spacing */
     }
 
@@ -215,12 +224,12 @@ function gameControl(){
         /*Uses the grids Checkboard function to check if there is a winning condition, uses console.log to declare winner and returns true to help break a while loop  */
     }
 
-    return{getTurn, advanceTurn, userMove, cpuMove, showBoardState, checkWinner};
+    return{getTurn, advanceTurn, userMove, cpuMove, showBoardState, checkWinner, createDom};
 };
 
 function screenControl(){
 
-    const createBoard= ()=>{
+    const addDisplay= ()=>{
         const main = document.querySelector("main");
         const gameTitle = document.createElement("h3");
         gameTitle.textContent = "Tic Tac Toe";
@@ -230,7 +239,8 @@ function screenControl(){
         for(let i = 1; i<10; i++){
             const card = document.createElement("div");
             card.setAttribute("class", "card");
-            card.setAttribute("id", i);
+            const cardId = "card"+i;
+            card.setAttribute("id", cardId);
             gameContainer.appendChild(card);
         }
 
@@ -243,10 +253,28 @@ function screenControl(){
         main.appendChild(restartBtn);
     }
 
-    return{createBoard};
+    const addO = (event) =>{
+        event.target.textContent ="O";
+        event.target.removeEventListener("click", addO);
+    }
+
+    function addX(idNumber) {
+        const element = document.querySelector("#card"+idNumber);
+        element.textContent ="X";
+    }
+
+    const bindEventListeners =()=>{
+        const cards = document.querySelectorAll(".card");
+        cards.forEach((card) =>{
+            card.addEventListener("click",addO);
+        })
+    }
+
+    return{addDisplay, bindEventListeners, addX};
 }
 
-const screen =screenControl();
-screen.createBoard();
+const game = gameControl();
+game.createDom();
+game.cpuMove();
 
 /*We need to implement the draw condition, work on UI logic, create play-a-round function that encompasses the code   */

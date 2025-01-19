@@ -84,6 +84,11 @@ h3{
   border:3px black solid;
   padding:4rem; 
   background-color:white; 
+  font-size:2.5rem;
+  font-weight:bold;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
 .card:hover{
