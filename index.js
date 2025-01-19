@@ -102,6 +102,17 @@ function gameboard(){
         }
       }
 
+      const isBoardFull = () => {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (typeof board[i][j] === "number") {
+                    return false; // If any cell is still a number, the board is not full
+                }
+            }
+        }
+        return true;
+    };
+
       const checkColumn = () => {
         if(board[0][0] === board[1][0] && board[1][0]===board[2][0]){
             if(board[0][0]==="O"){
@@ -174,7 +185,7 @@ function gameboard(){
 
 
 
-      return {getBoard, printBoard, fillCell, checkBoard,resetBoard};
+      return {getBoard, printBoard, fillCell, checkBoard, resetBoard, isBoardFull};
 
 };
 
@@ -189,19 +200,18 @@ function gameControl(){
 
     const screen = screenControl();
 
-    const getTurn = ()=> {return turn};
+    const getTurn = ()=> turn;
 
-    const advanceTurn = () => {turn +=1};
+    const advanceTurn = () => {turn +=2};
 
     const createDom = () =>{
         screen.addDisplay();
-        screen.bindEventListeners(userMove, cpuMove, checkWinner);
+        screen.bindEventListeners(userMove, cpuMove, checkWinner, restartGame, advanceTurn, getTurn);
         screen.bindRestartBtn(restartGame);
     }
 
     const userMove = (move) => {
         grid.fillCell(move, player);
-        grid.printBoard();
         /*Prompts the user to move using the prompt function and makes the move have to be valid in terms of the grid spacing */
     }
 
@@ -228,6 +238,9 @@ function gameControl(){
             return true;
         }else if (grid.checkBoard()===2){
             alert("User Lost");
+            return true;
+        }else if(grid.isBoardFull()){
+            alert("It's a draw!")
             return true;
         }
         return false;
@@ -277,16 +290,20 @@ function screenControl(){
         element.textContent ="X";
     }
 
-    const bindEventListeners =(user, opp, check)=>{
+    const bindEventListeners =(user, opp, check, boardReset, advanceTurn, getTurn)=>{
         const cards = document.querySelectorAll(".card");
         cards.forEach((card) =>{
             card.addEventListener("mousedown",addO);
             card.addEventListener("mouseup", (e)=>{
                 let move = Number(e.target.id[4]);
                 user(move);
-                check()
-                opp();
-                check();
+                if(check()===true){
+                    reset();
+                    boardReset();
+                }else if(check()===false){
+                    opp();
+                    check();
+                }
             } )
         })
     }
