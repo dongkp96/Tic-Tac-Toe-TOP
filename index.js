@@ -163,7 +163,7 @@ function gameboard(){
 };
 
 
-function gameController(){
+function gameControl(){
     const player = "O";
     const cpu ="X";
     let turn = 1;
@@ -218,23 +218,35 @@ function gameController(){
     return{getTurn, advanceTurn, userMove, cpuMove, showBoardState, checkWinner};
 };
 
-const game = gameController();
+function screenControl(){
 
-while(game.getTurn()<10){
-    game.userMove();
-    game.advanceTurn();
-    if(game.checkWinner()===true){
-        break;
+    const createBoard= ()=>{
+        const main = document.querySelector("main");
+        const gameTitle = document.createElement("h3");
+        gameTitle.textContent = "Tic Tac Toe";
+        main.appendChild(gameTitle);
+        const gameContainer = document.createElement("div");
+        gameContainer.setAttribute("class", "game-container");
+        for(let i = 1; i<10; i++){
+            const card = document.createElement("div");
+            card.setAttribute("class", "card");
+            card.setAttribute("id", i);
+            gameContainer.appendChild(card);
+        }
+
+        const restartBtn = document.createElement("button");
+        restartBtn.setAttribute("type", "generic"); 
+        restartBtn.setAttribute("id", "restart");
+        restartBtn.textContent = "Restart button";
+
+        main.appendChild(gameContainer);
+        main.appendChild(restartBtn);
     }
-    game.showBoardState();
-    game.cpuMove();
-    game.advanceTurn();
-    if(game.checkWinner()===true){
-        break;
-    }
-    game.showBoardState();
+
+    return{createBoard};
 }
-game.showBoardState();
-alert("Game finish!");
+
+const screen =screenControl();
+screen.createBoard();
 
 /*We need to implement the draw condition, work on UI logic, create play-a-round function that encompasses the code   */
